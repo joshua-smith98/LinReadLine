@@ -37,7 +37,7 @@ namespace LinuxConsoleReadLineFix
             
             _currentLine.Clear();
             _linePosition_f = 0;
-            _historyPosition = _history.Count - 1;
+            _historyPosition = -1;
 
             while (true)
             {
@@ -60,13 +60,21 @@ namespace LinuxConsoleReadLineFix
                         break;
                     case ConsoleKey.UpArrow:
                         // Place current history item in the line, and move backwards in history
-                        ReplaceLineWith(_history[_historyPosition]);
-                        if (_historyPosition > 0) _historyPosition--;
+                        if (_historyPosition == -1) // Case: first time searching through history
+                            _historyPosition = _history.Count - 1;
+                        else if (_historyPosition > 0)
+                            _historyPosition--;
+                        if (_history.Count != 0)
+                            ReplaceLineWith(_history[_historyPosition]);
                         break;
                     case ConsoleKey.DownArrow:
                         // Place current history item in the line, and move forwards in history
-                        ReplaceLineWith(_history[_historyPosition]);
-                        if (_historyPosition < _history.Count) _historyPosition++;
+                        if (_historyPosition == -1) // Case: first time searching through history
+                            _historyPosition = 0;
+                        else if (_historyPosition < _history.Count -1)
+                            _historyPosition++;
+                        if (_history.Count != 0)
+                            ReplaceLineWith(_history[_historyPosition]);
                         break;
                     case ConsoleKey.LeftArrow:
                         _linePosition--;
@@ -154,6 +162,8 @@ namespace LinuxConsoleReadLineFix
 
         private static void Clear()
         {
+            Console.CursorVisible = false;
+
             // Return to beginning of line
             _linePosition = 0;
 
@@ -166,6 +176,8 @@ namespace LinuxConsoleReadLineFix
 
             // Clear _currentLine
             _currentLine.Clear();
+
+            Console.CursorVisible = true;
         }
 
         private static void ReplaceLineWith(string line)
@@ -173,7 +185,9 @@ namespace LinuxConsoleReadLineFix
             Clear();
             _currentLine.AddRange(line);
             RefreshFromCurrentPosition();
-            _linePosition = _currentLine.Count - 1;
+            Console.CursorVisible = false;
+            _linePosition = _currentLine.Count;
+            Console.CursorVisible = true;
         }
 
         private static void AddToHistory(string str)
