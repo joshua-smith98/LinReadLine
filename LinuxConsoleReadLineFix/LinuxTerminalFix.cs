@@ -152,6 +152,7 @@ namespace LinuxConsoleReadLineFix
 
             // Write whitespace
             Console.Write(new string(Enumerable.Repeat(' ', _currentLine.Count).ToArray()));
+            _linePosition_f = _currentLine.Count;
 
             // Return to beginning of line
             _linePosition = 0;
