@@ -32,6 +32,9 @@ namespace LinuxConsoleReadLineFix
         
         public static string ReadLine()
         {
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) // If we're not on Linux, then just use the standard Console.ReadLine()
+                return Console.ReadLine();
+            
             _currentLine.Clear();
             _linePosition_f = 0;
             _historyPosition = _history.Count - 1;
@@ -68,7 +71,7 @@ namespace LinuxConsoleReadLineFix
                         _linePosition++;
                         break;
                     case ConsoleKey.Tab:
-                        WriteTab();
+                        // Do nothing: this is proving very hard to implement -> we'll sort this out at a later date!
                         break;
                     default:
                         WriteChar(key.KeyChar);
