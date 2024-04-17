@@ -60,20 +60,20 @@ namespace LinuxConsoleReadLineFix
                         break;
                     case ConsoleKey.UpArrow:
                         // Place current history item in the line, and move backwards in history
-                        if (_historyPosition == -1) // Case: first time searching through history
+                        if (_historyPosition == -1) // Case: first time searching through history -> start at the top
                             _historyPosition = _history.Count - 1;
                         else if (_historyPosition > 0)
                             _historyPosition--;
-                        if (_history.Count != 0)
+                        if (_history.Count != 0) // Check if history exists
                             ReplaceLineWith(_history[_historyPosition]);
                         break;
                     case ConsoleKey.DownArrow:
                         // Place current history item in the line, and move forwards in history
-                        if (_historyPosition == -1) // Case: first time searching through history
+                        if (_historyPosition == -1) // Case: first time searching through history -> start at the bottom
                             _historyPosition = 0;
                         else if (_historyPosition < _history.Count -1)
                             _historyPosition++;
-                        if (_history.Count != 0)
+                        if (_history.Count != 0) // Check if history exists
                             ReplaceLineWith(_history[_historyPosition]);
                         break;
                     case ConsoleKey.LeftArrow:
