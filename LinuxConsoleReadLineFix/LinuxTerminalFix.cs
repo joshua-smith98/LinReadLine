@@ -10,14 +10,14 @@ namespace LinuxConsoleReadLineFix
             get => _linePosition_f;
             set
             {
-                if (value > _linePosition_f && value < _currentLine.Count)
+                if (value > _linePosition_f && value <= _currentLine.Count)
                 {
                     for (int i = _linePosition_f; i < value; i++)
                         MoveCursorRight();
 
                     _linePosition_f = value;
                 }
-                else if (value < _linePosition_f && value > 0)
+                else if (value < _linePosition_f && value >= 0)
                 {
                     for (int i = _linePosition_f; i > value; i--)
                         MoveCursorLeft();
@@ -113,14 +113,15 @@ namespace LinuxConsoleReadLineFix
         {
             char[] toWrite = [.. _currentLine[_linePosition..^0], ' ']; // Add a space at the end to replace any characters that have been removed
             Console.Write(toWrite);
+            _linePosition_f += toWrite.Length;
             _linePosition -= toWrite.Length;
         }
 
         private static void WriteChar(char c)
         {
             _currentLine.Insert(_linePosition, c);
-            _linePosition++;
             RefreshFromCurrentPosition();
+            _linePosition++;
         }
 
         private static void WriteTab()
