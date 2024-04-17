@@ -111,10 +111,12 @@ namespace LinuxConsoleReadLineFix
 
         private static void RefreshFromCurrentPosition()
         {
+            Console.CursorVisible = false;
             char[] toWrite = [.. _currentLine[_linePosition..^0], ' ']; // Add a space at the end to replace any characters that have been removed
             Console.Write(toWrite);
             _linePosition_f += toWrite.Length;
             _linePosition -= toWrite.Length;
+            Console.CursorVisible = true;
         }
 
         private static void WriteChar(char c)
