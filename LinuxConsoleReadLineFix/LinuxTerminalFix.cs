@@ -1,4 +1,4 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Runtime.InteropServices;
 
 namespace LinuxConsoleReadLineFix
 {
@@ -47,7 +47,7 @@ namespace LinuxConsoleReadLineFix
                 {
                     case ConsoleKey.Enter: // Write newline and return
                         Console.WriteLine();
-                        _history.Add(new string(_currentLine.ToArray()));
+                        AddToHistory(new string(_currentLine.ToArray()));
                         return new string(_currentLine.ToArray());
                     case ConsoleKey.Escape: // Clear the current line
                         Clear();
@@ -59,10 +59,14 @@ namespace LinuxConsoleReadLineFix
                         Backspace();
                         break;
                     case ConsoleKey.UpArrow:
-                        // do thing
+                        // Place current history item in the line, and move backwards in history
+                        ReplaceLineWith(_history[_historyPosition]);
+                        if (_historyPosition > 0) _historyPosition--;
                         break;
                     case ConsoleKey.DownArrow:
-                        // do other thing
+                        // Place current history item in the line, and move forwards in history
+                        ReplaceLineWith(_history[_historyPosition]);
+                        if (_historyPosition < _history.Count) _historyPosition++;
                         break;
                     case ConsoleKey.LeftArrow:
                         _linePosition--;
