@@ -1,9 +1,11 @@
 ﻿using LinuxConsoleReadLineFix;
 
-while(true)
+string result = "";
+
+while(result != "exit")
 {
 Console.Write(">> ");
-var result = LinuxTerminalFix.ReadLine();
+result = LinuxTerminalFix.ReadLine();
 Console.WriteLine(result);
 Console.WriteLine();
 }
