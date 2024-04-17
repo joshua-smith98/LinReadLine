@@ -33,7 +33,7 @@ namespace LinuxConsoleReadLineFix
         public static string ReadLine()
         {
             _currentLine.Clear();
-            _linePosition = 0;
+            _linePosition_f = 0;
             _historyPosition = _history.Count - 1;
 
             while (true)
@@ -130,6 +130,8 @@ namespace LinuxConsoleReadLineFix
 
         private static void Delete()
         {
+            if (_linePosition >= _currentLine.Count) return;
+
             _currentLine.RemoveAt(_linePosition);
             RefreshFromCurrentPosition();
         }
