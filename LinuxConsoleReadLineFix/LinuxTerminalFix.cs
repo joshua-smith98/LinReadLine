@@ -33,7 +33,7 @@ namespace LinuxConsoleReadLineFix
         public static string ReadLine()
         {
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) // If we're not on Linux, then just use the standard Console.ReadLine()
-                return Console.ReadLine();
+                return Console.ReadLine()!;
             
             _currentLine.Clear();
             _linePosition_f = 0;
