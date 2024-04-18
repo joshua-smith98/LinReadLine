@@ -45,46 +45,71 @@ namespace LinuxConsoleReadLineFix
 
                 switch (key.Key)
                 {
-                    case ConsoleKey.Enter: // Write newline and return
+                    // Enter -> Write newline and return
+                    case ConsoleKey.Enter:
                         Console.WriteLine();
                         AddToHistory(new string(_currentLine.ToArray()));
                         return new string(_currentLine.ToArray());
-                    case ConsoleKey.Escape: // Clear the current line
+
+                    // Escape -> Clear the current line
+                    case ConsoleKey.Escape:
                         Clear();
                         break;
+
+                    // Delete -> Remove the char at the cursor
                     case ConsoleKey.Delete:
                         Delete();
                         break;
+                    
+                    // Backspace -> Remove the char behind the cursor
                     case ConsoleKey.Backspace:
                         Backspace();
                         break;
+
+                    // Up Arrow -> Cycle down through history
                     case ConsoleKey.UpArrow:
-                        // Place current history item in the line, and move backwards in history
-                        if (_historyPosition == -1) // Case: first time searching through history -> start at the top
+                        // Case: first time -> start at the top
+                        if (_historyPosition == -1)
                             _historyPosition = _history.Count - 1;
+                        // Otherwise, cycle down if within bounds
                         else if (_historyPosition > 0)
                             _historyPosition--;
-                        if (_history.Count != 0) // Check if history exists
+
+                        // Only replace line if some history exists
+                        if (_history.Count != 0)
                             ReplaceLineWith(_history[_historyPosition]);
                         break;
+
+                    // Down Arrow -> Cycle up through history
                     case ConsoleKey.DownArrow:
-                        // Place current history item in the line, and move forwards in history
-                        if (_historyPosition == -1) // Case: first time searching through history -> start at the bottom
+                        // Case: first time -> start at the bottom
+                        if (_historyPosition == -1) 
                             _historyPosition = 0;
+                        // Otherwise, cycle up if within bounds
                         else if (_historyPosition < _history.Count -1)
                             _historyPosition++;
-                        if (_history.Count != 0) // Check if history exists
+
+                        // Only replace line if some history exists
+                        if (_history.Count != 0)
                             ReplaceLineWith(_history[_historyPosition]);
                         break;
+
+                    // Left Arrow -> Move the cursor left
                     case ConsoleKey.LeftArrow:
                         _linePosition--;
                         break;
+
+                    // Right Arrow -> Move the cursor right
                     case ConsoleKey.RightArrow:
                         _linePosition++;
                         break;
+
+                    // Tab -> [do nothing for now]
+                    // This is proving very hard to implement -> we'll sort this out at a later date!
                     case ConsoleKey.Tab:
-                        // Do nothing: this is proving very hard to implement -> we'll sort this out at a later date!
                         break;
+
+                    // Any other -> write to the console if valid
                     default:
                         if (key.KeyChar == '\u0000') break; // Ignore keys with no corresponding char
                         if (key.Modifiers == ConsoleModifiers.Alt || key.Modifiers == ConsoleModifiers.Control) break; // Ignore if control or alt is pressed
