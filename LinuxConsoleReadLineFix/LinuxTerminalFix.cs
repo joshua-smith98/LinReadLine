@@ -127,6 +127,7 @@ namespace LinuxConsoleReadLineFix
             }
         }
 
+        // Refreshes the console line starting at the cursor position.
         private static void RefreshFromCurrentPosition()
         {
             Console.CursorVisible = false;
@@ -137,6 +138,7 @@ namespace LinuxConsoleReadLineFix
             Console.CursorVisible = true;
         }
 
+        // Writes a char to the console at the cursor position and refreshes.
         private static void WriteChar(char c)
         {
             _currentLine.Insert(_lineIndex, c);
@@ -144,11 +146,7 @@ namespace LinuxConsoleReadLineFix
             _lineIndex++;
         }
 
-        private static void WriteTab()
-        {
-            WriteChar('\t');
-        }
-
+        // Deletes the char at the cursor position and refreshes.
         private static void Delete()
         {
             if (_lineIndex >= _currentLine.Count) return;
@@ -157,6 +155,7 @@ namespace LinuxConsoleReadLineFix
             RefreshFromCurrentPosition();
         }
 
+        // Deletes the char just before the cursor position and refreshes.
         private static void Backspace()
         {
             if (_lineIndex == 0) return; // Only backspace if there is something to backspace
@@ -165,6 +164,7 @@ namespace LinuxConsoleReadLineFix
             Delete();
         }
 
+        // Clears the console line and returns the cursor to the start.
         private static void Clear()
         {
             Console.CursorVisible = false;
@@ -184,6 +184,7 @@ namespace LinuxConsoleReadLineFix
             Console.CursorVisible = true;
         }
 
+        // Clears the current console line and replaces it with the given string
         private static void ReplaceLineWith(string line)
         {
             Clear();
@@ -194,6 +195,7 @@ namespace LinuxConsoleReadLineFix
             Console.CursorVisible = true;
         }
 
+        // Adds the given string to the line history
         private static void AddToHistory(string str)
         {
             // Case: str is already contained in history -> remove all previous references
@@ -205,9 +207,11 @@ namespace LinuxConsoleReadLineFix
             _historyPosition = -1;
         }
 
+        // Converts console cursor coords to a console buffer index
         private static int CursorCoordsToIndex(int left, int top)
             => (Console.BufferWidth * top) + left;
 
+        // Converts a console buffer index to cursor coords
         private static (int left, int top) CursorIndexToCoords(int index)
             => (index % Console.BufferWidth, (int)Math.Floor((float)index / Console.BufferWidth));
     }
