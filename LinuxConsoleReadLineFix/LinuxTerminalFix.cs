@@ -5,28 +5,33 @@ namespace LinuxConsoleReadLineFix
     public static class LinuxTerminalFix
     {
         private static readonly List<char> _currentLine = new();
-        private static int _linePosition 
+
+        private static int _cursorStartIndex = -1;
+        private static int _cursorIndex
         {
-            get => _linePosition_f;
+            get => _cursorIndex_f;
             set
             {
-                if (value > _linePosition_f && value <= _currentLine.Count)
-                {
-                    for (int i = _linePosition_f; i < value; i++)
-                        MoveCursorRight();
+                ArgumentOutOfRangeException.ThrowIfNegative(value);
 
-                    _linePosition_f = value;
-                }
-                else if (value < _linePosition_f && value >= 0)
-                {
-                    for (int i = _linePosition_f; i > value; i--)
-                        MoveCursorLeft();
-
-                    _linePosition_f = value;
-                }
+                var cursorCoords = CursorIndexToCoords(value);
+                Console.CursorLeft = cursorCoords.left;
+                Console.CursorTop = cursorCoords.top;
+                _cursorIndex_f = value;
             }
         }
-        private static int _linePosition_f = -1;
+        private static int _cursorIndex_f = -1;
+        
+        private static int _lineIndex
+        {
+            get => _cursorIndex - _cursorStartIndex;
+            set
+            {
+                if (value >= 0 && value <= _currentLine.Count)
+                    _cursorIndex = value + _cursorStartIndex;
+            }
+        }
+
         private static readonly List<string> _history = new(); // TODO: implement persistence outside of runtime using settings
         private static int _historyPosition = -1;
         
@@ -38,7 +43,8 @@ namespace LinuxConsoleReadLineFix
 #endif
             
             _currentLine.Clear();
-            _linePosition_f = 0;
+            _cursorStartIndex = CursorCoordsToIndex(Console.CursorLeft, Console.CursorTop);
+            _cursorIndex_f = _cursorStartIndex;
             _historyPosition = -1;
 
             while (true)
@@ -98,12 +104,12 @@ namespace LinuxConsoleReadLineFix
 
                     // Left Arrow -> Move the cursor left
                     case ConsoleKey.LeftArrow:
-                        _linePosition--;
+                        _lineIndex--;
                         break;
 
                     // Right Arrow -> Move the cursor right
                     case ConsoleKey.RightArrow:
-                        _linePosition++;
+                        _lineIndex++;
                         break;
 
                     // Tab -> [do nothing for now]
@@ -121,53 +127,21 @@ namespace LinuxConsoleReadLineFix
             }
         }
 
-        private static void MoveCursorLeft()
-        {
-            // Case: cursor is at the very start of the console buffer
-            if (Console.CursorLeft == 0 && Console.CursorTop == 0)
-                return;
-
-            // Case: cursor is at the start of a line -> wrap around to the previous
-            if (Console.CursorLeft == 0)
-            {
-                Console.CursorLeft = Console.BufferWidth - 1;
-                Console.CursorTop--;
-                return;
-            }
-
-            // All other cases
-            Console.CursorLeft--;
-        }
-
-        private static void MoveCursorRight()
-        {
-            // Case: cursor is at the end of a line -> wrap around to the next
-            if (Console.CursorLeft == Console.BufferWidth - 1)
-            {
-                Console.CursorLeft = 0;
-                Console.CursorTop++;
-                return;
-            }
-
-            // All other cases
-            Console.CursorLeft++;
-        }
-
         private static void RefreshFromCurrentPosition()
         {
             Console.CursorVisible = false;
-            char[] toWrite = [.. _currentLine[_linePosition..], ' ']; // Add a space at the end to replace any characters that have been removed
+            var lineStartIndex = _lineIndex;
+            char[] toWrite = [.. _currentLine[_lineIndex..], ' ']; // Add a space at the end to replace any characters that have been removed
             Console.Write(toWrite);
-            _linePosition_f += toWrite.Length;
-            _linePosition -= toWrite.Length;
+            _lineIndex = lineStartIndex;
             Console.CursorVisible = true;
         }
 
         private static void WriteChar(char c)
         {
-            _currentLine.Insert(_linePosition, c);
+            _currentLine.Insert(_lineIndex, c);
             RefreshFromCurrentPosition();
-            _linePosition++;
+            _lineIndex++;
         }
 
         private static void WriteTab()
@@ -177,15 +151,17 @@ namespace LinuxConsoleReadLineFix
 
         private static void Delete()
         {
-            if (_linePosition >= _currentLine.Count) return;
+            if (_lineIndex >= _currentLine.Count) return;
 
-            _currentLine.RemoveAt(_linePosition);
+            _currentLine.RemoveAt(_lineIndex);
             RefreshFromCurrentPosition();
         }
 
         private static void Backspace()
         {
-            _linePosition--;
+            if (_lineIndex == 0) return; // Only backspace if there is something to backspace
+
+            _lineIndex--;
             Delete();
         }
 
@@ -194,14 +170,13 @@ namespace LinuxConsoleReadLineFix
             Console.CursorVisible = false;
 
             // Return to beginning of line
-            _linePosition = 0;
+            _lineIndex = 0;
 
             // Write whitespace
             Console.Write(new string(Enumerable.Repeat(' ', _currentLine.Count).ToArray()));
-            _linePosition_f = _currentLine.Count;
 
             // Return to beginning of line
-            _linePosition = 0;
+            _lineIndex = 0;
 
             // Clear _currentLine
             _currentLine.Clear();
@@ -215,7 +190,7 @@ namespace LinuxConsoleReadLineFix
             _currentLine.AddRange(line);
             RefreshFromCurrentPosition();
             Console.CursorVisible = false;
-            _linePosition = _currentLine.Count;
+            _lineIndex = _currentLine.Count;
             Console.CursorVisible = true;
         }
 
@@ -227,7 +202,13 @@ namespace LinuxConsoleReadLineFix
 
             // Add new and reset position
             _history.Add(str);
-            _historyPosition = _history.Count - 1;
+            _historyPosition = -1;
         }
+
+        private static int CursorCoordsToIndex(int left, int top)
+            => (Console.BufferWidth * top) + left;
+
+        private static (int left, int top) CursorIndexToCoords(int index)
+            => (index % Console.BufferWidth, (int)Math.Floor((float)index / Console.BufferWidth));
     }
 }
