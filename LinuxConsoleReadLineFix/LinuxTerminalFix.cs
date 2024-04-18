@@ -86,6 +86,8 @@ namespace LinuxConsoleReadLineFix
                         // Do nothing: this is proving very hard to implement -> we'll sort this out at a later date!
                         break;
                     default:
+                        if (key.KeyChar == '\u0000') break; // Ignore keys with no corresponding char
+                        if (key.Modifiers == ConsoleModifiers.Alt || key.Modifiers == ConsoleModifiers.Control) break; // Ignore if control or alt is pressed
                         WriteChar(key.KeyChar);
                         break;
                 }
