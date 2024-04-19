@@ -84,8 +84,8 @@ namespace LinuxConsoleReadLineFix
                         else if (_historyPosition > 0)
                             _historyPosition--;
 
-                        // Only replace line if some history exists
-                        if (_history.Count != 0)
+                        // Only replace line if some history exists and is different to what's already there
+                        if (_history.Count != 0 && _history[_historyPosition] != _currentLine_str)
                             ReplaceLineWith(_history[_historyPosition]);
                         break;
 
@@ -98,8 +98,8 @@ namespace LinuxConsoleReadLineFix
                         else if (_historyPosition < _history.Count -1)
                             _historyPosition++;
 
-                        // Only replace line if some history exists
-                        if (_history.Count != 0)
+                        // Only replace line if some history exists and is different to what's already there
+                        if (_history.Count != 0 && _history[_historyPosition] != _currentLine_str)
                             ReplaceLineWith(_history[_historyPosition]);
                         break;
 
