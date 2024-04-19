@@ -131,12 +131,10 @@ namespace LinuxConsoleReadLineFix
         // Refreshes the console line starting at the cursor position.
         private static void RefreshFromCurrentPosition()
         {
-            Console.CursorVisible = false;
             var lineStartIndex = _lineIndex;
             char[] toWrite = [.. _currentLine[_lineIndex..], ' ']; // Add a space at the end to replace any characters that have been removed
             Console.Write(toWrite);
             _lineIndex = lineStartIndex;
-            Console.CursorVisible = true;
         }
 
         // Writes a char to the console at the cursor position and refreshes.
@@ -168,8 +166,6 @@ namespace LinuxConsoleReadLineFix
         // Clears the console line and returns the cursor to the start.
         private static void Clear()
         {
-            Console.CursorVisible = false;
-
             // Return to beginning of line
             _lineIndex = 0;
 
@@ -181,8 +177,6 @@ namespace LinuxConsoleReadLineFix
 
             // Clear _currentLine
             _currentLine.Clear();
-
-            Console.CursorVisible = true;
         }
 
         // Clears the current console line and replaces it with the given string
