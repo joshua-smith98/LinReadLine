@@ -5,6 +5,7 @@ namespace LinuxConsoleReadLineFix
     public static class LinuxTerminalFix
     {
         private static readonly List<char> _currentLine = new();
+        private static string _currentLine_str => new string(_currentLine.ToArray());
 
         private static int _cursorStartIndex = -1;
         private static int _cursorIndex
@@ -56,8 +57,8 @@ namespace LinuxConsoleReadLineFix
                     // Enter -> Write newline and return
                     case ConsoleKey.Enter:
                         Console.WriteLine();
-                        AddToHistory(new string(_currentLine.ToArray()));
-                        return new string(_currentLine.ToArray());
+                        AddToHistory(_currentLine_str);
+                        return _currentLine_str;
 
                     // Escape -> Clear the current line
                     case ConsoleKey.Escape:
