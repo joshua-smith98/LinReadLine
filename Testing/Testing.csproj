@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LinuxConsoleReadLineFix\LinuxConsoleReadLineFix.csproj" />
+    <ProjectReference Include="..\LinReadLine\LinReadLine.csproj" />
   </ItemGroup>
 
 </Project>

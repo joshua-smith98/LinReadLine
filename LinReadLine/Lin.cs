@@ -1,8 +1,8 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace LinuxConsoleReadLineFix
+namespace LinReadLine
 {
-    public static class LinuxTerminalFix
+    public static class Lin
     {
         private static readonly List<char> _currentLine = new();
         private static string _currentLine_str => new string(_currentLine.ToArray());
