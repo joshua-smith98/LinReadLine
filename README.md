@@ -1,4 +1,4 @@
-# LinuxConsoleReadLineFix
+# LinReadLine
 .NET's Console.ReadLine() method is functionally incomplete on Linux, with no ability to move the cursor beyond typing and backspacing.
 
 This library aims to fix this by emulating the complete Windows behaviour on Linux.
@@ -14,19 +14,19 @@ This library aims to fix this by emulating the complete Windows behaviour on Lin
 # Installation and Usage
 To use in your own project:
 1. Download the latest release from the Releases Page.
-2. Place _LinuxConsoleReadLineFix.dll_ into your solution folder.
-3. Add a new dependancy and select _LinuxConsoleReadLineFix.dll_.
+2. Place _LinReadLine.dll_ into your solution folder.
+3. Add a new dependancy to your project, click "Browse" and select _LinReadLine.dll_.
 
-You can then use ReadLine() via the _LinuxTerminalFix_ class as follows:
+You can then use ReadLine() via the _Lin_ class as follows:
 
     // Import Namespace
-    using LinuxConsoleReadLineFix;
+    using LinReadLine;
 
     // Prompt the user
     Console.Write("What's your name? ");
 
     // Get user input
-    var name = LinuxTerminalFix.ReadLine();
+    var name = Lin.ReadLine();
 
     // Write feedback to console
     Console.WriteLine($"Your name is {name}!");
