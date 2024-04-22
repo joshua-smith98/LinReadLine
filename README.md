@@ -19,14 +19,16 @@ To use in your own project:
 
 You can then use ReadLine() via the _Lin_ class as follows:
 
-    // Import Namespace
-    using LinReadLine;
+```C#
+// Import Namespace
+using LinReadLine;
 
-    // Prompt the user
-    Console.Write("What's your name? ");
+// Prompt the user
+Console.Write("What's your name? ");
 
-    // Get user input
-    var name = Lin.ReadLine();
+// Get user input
+var name = Lin.ReadLine();
 
-    // Write feedback to console
-    Console.WriteLine($"Your name is {name}!");
+// Write feedback to console
+Console.WriteLine($"Your name is {name}!");
+```
