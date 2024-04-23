@@ -2,12 +2,29 @@
 
 namespace LinReadLine
 {
+    /// <summary>
+    /// Container for <see cref="ReadLine()"/>.
+    /// </summary>
     public static class Lin
     {
+        /// <summary>
+        /// The current value of the user-input line.
+        /// </summary>
         private static readonly List<char> _currentLine = new();
+        
+        /// <summary>
+        /// Converts _currentLine to string
+        /// </summary>
         private static string _currentLine_str => new string(_currentLine.ToArray());
 
+        /// <summary>
+        /// Position of the cursor at the start of the current user-input line
+        /// </summary>
         private static int _cursorStartIndex = -1;
+        
+        /// <summary>
+        /// Linear position of the cursor in relation to the console buffer.
+        /// </summary>
         private static int _cursorIndex
         {
             get => _cursorIndex_f;
@@ -23,6 +40,9 @@ namespace LinReadLine
         }
         private static int _cursorIndex_f = -1;
         
+        /// <summary>
+        /// Linear position of the cursor in relation to the current user-input line.
+        /// </summary>
         private static int _lineIndex
         {
             get => _cursorIndex - _cursorStartIndex;
@@ -33,9 +53,20 @@ namespace LinReadLine
             }
         }
 
+        /// <summary>
+        /// Current runtime history of returned lines.
+        /// </summary>
         private static readonly List<string> _history = new(); // TODO: implement persistence outside of runtime using settings
+        /// <summary>
+        /// Current position in _history.
+        /// </summary>
         private static int _historyPosition = -1;
         
+        /// <summary>
+        /// Reads a single user-typed line from the console, emulating Windows behaviour on Linux.<br/>
+        /// If used on an OS outside of Linux, simply returns the result of <see cref="Console.ReadLine()"/>.
+        /// </summary>
+        /// <returns></returns>
         public static string ReadLine()
         {
 #if !DEBUG
@@ -43,14 +74,16 @@ namespace LinReadLine
                 return Console.ReadLine()!;
 #endif
             
+            // Setup fields for reading
             _currentLine.Clear();
             _cursorStartIndex = CursorCoordsToIndex(Console.CursorLeft, Console.CursorTop);
             _cursorIndex_f = _cursorStartIndex;
             _historyPosition = -1;
 
+            // Read loop
             while (true)
             {
-                var key = Console.ReadKey(true);
+                var key = Console.ReadKey(true); // Block writing of the key, we'll write it ourselves later
 
                 switch (key.Key)
                 {
@@ -128,7 +161,9 @@ namespace LinReadLine
             }
         }
 
-        // Refreshes the console line starting at the cursor position.
+        /// <summary>
+        /// Refreshes the console line starting at the cursor position.
+        /// </summary>
         private static void RefreshFromCurrentPosition()
         {
             var lineStartIndex = _lineIndex;
@@ -137,7 +172,10 @@ namespace LinReadLine
             _lineIndex = lineStartIndex;
         }
 
-        // Writes a char to the console at the cursor position and refreshes.
+        /// <summary>
+        /// Writes a char to the console at the cursor position and refreshes.
+        /// </summary>
+        /// <param name="c"></param>
         private static void WriteChar(char c)
         {
             _currentLine.Insert(_lineIndex, c);
@@ -145,7 +183,9 @@ namespace LinReadLine
             _lineIndex++;
         }
 
-        // Deletes the char at the cursor position and refreshes.
+        /// <summary>
+        /// Deletes the char at the cursor position and refreshes.
+        /// </summary>
         private static void Delete()
         {
             if (_lineIndex >= _currentLine.Count) return;
@@ -154,7 +194,9 @@ namespace LinReadLine
             RefreshFromCurrentPosition();
         }
 
-        // Deletes the char just before the cursor position and refreshes.
+        /// <summary>
+        /// Deletes the char just before the cursor position and refreshes.
+        /// </summary>
         private static void Backspace()
         {
             if (_lineIndex == 0) return; // Only backspace if there is something to backspace
@@ -163,7 +205,9 @@ namespace LinReadLine
             Delete();
         }
 
-        // Clears the console line and returns the cursor to the start.
+        /// <summary>
+        /// Clears the console line and returns the cursor to the start.
+        /// </summary>
         private static void Clear()
         {
             // Return to beginning of line
@@ -179,7 +223,10 @@ namespace LinReadLine
             _currentLine.Clear();
         }
 
-        // Clears the current console line and replaces it with the given string
+        /// <summary>
+        /// Clears the current console line and replaces it with the given string
+        /// </summary>
+        /// <param name="line"></param>
         private static void ReplaceLineWith(string line)
         {
             Clear();
@@ -190,7 +237,10 @@ namespace LinReadLine
             Console.CursorVisible = true;
         }
 
-        // Adds the given string to the line history
+        /// <summary>
+        /// Adds the given string to the line history
+        /// </summary>
+        /// <param name="str"></param>
         private static void AddToHistory(string str)
         {
             // Case: str is already contained in history -> remove all previous references
@@ -202,11 +252,20 @@ namespace LinReadLine
             _historyPosition = -1;
         }
 
-        // Converts console cursor coords to a console buffer index
+        /// <summary>
+        /// Converts console cursor coords to a console buffer index
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="top"></param>
+        /// <returns></returns>
         private static int CursorCoordsToIndex(int left, int top)
             => (Console.BufferWidth * top) + left;
 
-        // Converts a console buffer index to cursor coords
+        /// <summary>
+        /// Converts a console buffer index to cursor coords
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
         private static (int left, int top) CursorIndexToCoords(int index)
             => (index % Console.BufferWidth, (int)Math.Floor((float)index / Console.BufferWidth));
     }
