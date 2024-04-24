@@ -84,6 +84,9 @@ namespace LinReadLine
         /// <summary>
         /// Reads a single user-typed line from the console, emulating Windows behaviour on Linux.<br/>
         /// If used on an OS outside of Linux, simply returns the result of <see cref="Console.ReadLine()"/>.
+        /// <br/><br/>
+        /// Note: Since <see cref="Console.CursorVisible.get"/> isn't available on Linux we can't save the cursor visibility when this method is called.<br/>
+        /// The cursor will be visible upon return. If you need to cursor to be invisible upon return, you must (unfortunately) set it yourself.
         /// </summary>
         /// <returns></returns>
         public static string ReadLine()
@@ -114,6 +117,7 @@ namespace LinReadLine
                         _lineIndex = _currentLine.Count; // Move cursor to the end of the user-input before writing newline
                         Console.WriteLine();
                         AddToHistory(_currentLine_str);
+                        Console.CursorVisible = true; // Ensure cursor is visible before we return
                         return _currentLine_str;
 
                     // Escape -> Clear the current line
@@ -182,7 +186,7 @@ namespace LinReadLine
                         break;
                 }
 
-                // Make cursor visible again.
+                // Make cursor visible again while user types
                 Console.CursorVisible = true;
             }
         }
