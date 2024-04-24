@@ -80,39 +80,6 @@ namespace LinReadLine
         /// Current position in _history.
         /// </summary>
         private static int _historyPosition = -1;
-        
-        public static void TestMoveCursor()
-        {
-            // Set up fields for movement
-            _cursorStartIndex = CursorCoordsToIndex(Console.CursorLeft, Console.CursorTop);
-            _cursorIndex_f = _cursorStartIndex;
-
-            while(true)
-            {
-                var key = Console.ReadKey(true);
-
-                switch(key.Key)
-                {
-                    case ConsoleKey.Escape:
-                        _cursorIndex = _cursorStartIndex;
-                        return;
-                    case ConsoleKey.LeftArrow:
-                        if (_cursorIndex >= 0)
-                            _cursorIndex--;
-                        break;
-                    case ConsoleKey.RightArrow:
-                        _cursorIndex++;
-                        break;
-                    case ConsoleKey.UpArrow:
-                        if (_cursorIndex - Console.BufferWidth >= 0)
-                            _cursorIndex -= Console.BufferWidth;
-                        break;
-                    case ConsoleKey.DownArrow:
-                        _cursorIndex += Console.BufferWidth;
-                        break;
-                }
-            }
-        }
 
         /// <summary>
         /// Reads a single user-typed line from the console, emulating Windows behaviour on Linux.<br/>
