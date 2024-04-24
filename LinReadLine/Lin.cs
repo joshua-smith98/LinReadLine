@@ -269,6 +269,10 @@ namespace LinReadLine
         /// <param name="str"></param>
         private static void AddToHistory(string str)
         {
+            // Don't add if str is empty
+            if (str == string.Empty)
+                return;
+            
             // Case: str is already contained in history -> remove all previous references
             while (_history.Contains(str))
                 _history.Remove(str);
