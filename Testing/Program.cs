@@ -1,8 +1,5 @@
 ﻿using LinReadLine;
 
-Lin.TestMoveCursor();
-
-/*
 string result = "";
 
 while(result != "exit")
@@ -12,4 +9,3 @@ result = Lin.ReadLine();
 Console.WriteLine(result);
 Console.WriteLine();
 }
-*/
