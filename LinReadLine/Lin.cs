@@ -31,6 +31,9 @@ namespace LinReadLine
             set
             {
                 ArgumentOutOfRangeException.ThrowIfNegative(value);
+                
+                if (CursorIndexToCoords(value).top >= Console.BufferHeight)
+                    throw new ArgumentOutOfRangeException(nameof(value));
 
                 var cursorCoords = CursorIndexToCoords(value);
                 Console.CursorLeft = cursorCoords.left;
@@ -84,11 +87,11 @@ namespace LinReadLine
                     case ConsoleKey.RightArrow:
                         _cursorIndex++;
                         break;
-                    case ConsoleKey.DownArrow:
+                    case ConsoleKey.UpArrow:
                         if (_cursorIndex - Console.BufferWidth >= 0)
                             _cursorIndex -= Console.BufferWidth;
                         break;
-                    case ConsoleKey.UpArrow:
+                    case ConsoleKey.DownArrow:
                         _cursorIndex += Console.BufferWidth;
                         break;
                 }
