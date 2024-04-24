@@ -188,6 +188,20 @@ namespace LinReadLine
             var lineStartIndex = _lineIndex;
             char[] toWrite = [.. _currentLine[_lineIndex..], ' ']; // Add a space at the end to replace any characters that have been removed
             Console.Write(toWrite);
+            
+            // Apply scrolling compensation here as well (see _cursorIndex)
+            var endWriteIndex = _cursorIndex + toWrite.Length - 1;
+
+            if (CursorIndexToCoords(endWriteIndex).top >= Console.BufferHeight)
+            {
+                // Correct _cursorStartIndex
+                var moveAmount = CursorIndexToCoords(endWriteIndex).top - Console.BufferHeight + 1;
+                _cursorStartIndex -= moveAmount * Console.BufferWidth;
+                
+                // Correct _cursorIndex
+                _cursorIndex_f = endWriteIndex - moveAmount * Console.BufferWidth;
+            }
+
             _lineIndex = lineStartIndex;
         }
 
