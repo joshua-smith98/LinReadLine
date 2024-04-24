@@ -37,10 +37,20 @@ namespace LinReadLine
                 // It's a bit of a hack, but since we don't have Console.SetWindowPosition() on Linux there's no other way!
                 if (CursorIndexToCoords(value).top >= Console.BufferHeight)
                 {
+                    // Correct _cursorStartIndex
                     var moveAmount = CursorIndexToCoords(value).top - Console.BufferHeight + 1;
-                    _cursorStartIndex -= moveAmount * Console.WindowWidth;
+                    _cursorStartIndex -= moveAmount * Console.BufferWidth;
+                    
+                    // Correct _cursorIndex
+                    var newCursorIndex = value - moveAmount * Console.BufferWidth;
+                    var newCursorCoords = CursorIndexToCoords(newCursorIndex);
+                    Console.CursorLeft = newCursorCoords.left;
+                    Console.CursorTop = newCursorCoords.top;
+                    _cursorIndex_f = newCursorIndex;
+                    return;
                 }
 
+                // Otherwise, business as usual
                 var cursorCoords = CursorIndexToCoords(value);
                 Console.CursorLeft = cursorCoords.left;
                 Console.CursorTop = cursorCoords.top;
@@ -220,7 +230,16 @@ namespace LinReadLine
         /// <param name="c"></param>
         private static void WriteChar(char c)
         {
-            _currentLine.Insert(_lineIndex, c);
+            try
+            {
+                _currentLine.Insert(_lineIndex, c);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                Console.WriteLine();
+                Console.WriteLine($"{_lineIndex}:{_currentLine.Count}");
+                throw;
+            }
             RefreshFromCurrentPosition();
             _lineIndex++;
         }
@@ -274,9 +293,7 @@ namespace LinReadLine
             Clear();
             _currentLine.AddRange(line);
             RefreshFromCurrentPosition();
-            Console.CursorVisible = false;
             _lineIndex = _currentLine.Count;
-            Console.CursorVisible = true;
         }
 
         /// <summary>
