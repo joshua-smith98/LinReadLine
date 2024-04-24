@@ -104,6 +104,9 @@ namespace LinReadLine
             {
                 var key = Console.ReadKey(true); // Block writing of the key, we'll write it ourselves later
 
+                // Make cursor invisible while make our changes, since it'll be moving all over the place
+                Console.CursorVisible = false;
+                
                 switch (key.Key)
                 {
                     // Enter -> Write newline and return
@@ -177,6 +180,9 @@ namespace LinReadLine
                         WriteChar(key.KeyChar);
                         break;
                 }
+
+                // Make cursor visible again.
+                Console.CursorVisible = true;
             }
         }
 
