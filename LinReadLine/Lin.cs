@@ -111,6 +111,7 @@ namespace LinReadLine
                 {
                     // Enter -> Write newline and return
                     case ConsoleKey.Enter:
+                        _lineIndex = _currentLine.Count; // Move cursor to the end of the user-input before writing newline
                         Console.WriteLine();
                         AddToHistory(_currentLine_str);
                         return _currentLine_str;
