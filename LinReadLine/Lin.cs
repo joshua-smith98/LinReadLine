@@ -32,8 +32,14 @@ namespace LinReadLine
             {
                 ArgumentOutOfRangeException.ThrowIfNegative(value);
                 
+                // JEBUS it took me a long time to figure this out but by golly gosh goshers its working...ITS WORKING
+                // Here we correct the start index for the console scrolling down when crossing onto a new line - that way our local coords stay synced with the window
+                // It's a bit of a hack, but since we don't have Console.SetWindowPosition() on Linux there's no other way!
                 if (CursorIndexToCoords(value).top >= Console.BufferHeight)
-                    throw new ArgumentOutOfRangeException(nameof(value));
+                {
+                    var moveAmount = CursorIndexToCoords(value).top - Console.BufferHeight + 1;
+                    _cursorStartIndex -= moveAmount * Console.WindowWidth;
+                }
 
                 var cursorCoords = CursorIndexToCoords(value);
                 Console.CursorLeft = cursorCoords.left;
