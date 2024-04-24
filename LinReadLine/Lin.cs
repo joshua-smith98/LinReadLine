@@ -197,16 +197,7 @@ namespace LinReadLine
         /// <param name="c"></param>
         private static void WriteChar(char c)
         {
-            try
-            {
-                _currentLine.Insert(_lineIndex, c);
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                Console.WriteLine();
-                Console.WriteLine($"{_lineIndex}:{_currentLine.Count}");
-                throw;
-            }
+            _currentLine.Insert(_lineIndex, c);
             RefreshFromCurrentPosition();
             _lineIndex++;
         }
